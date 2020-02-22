@@ -5,10 +5,7 @@ from .pupil import Pupil
 
 
 class Eye(object):
-    """
-    This class creates a new frame to isolate the eye and
-    initiates the pupil detection.
-    """
+
 
     LEFT_EYE_POINTS = [36, 37, 38, 39, 40, 41]
     RIGHT_EYE_POINTS = [42, 43, 44, 45, 46, 47]
@@ -23,24 +20,13 @@ class Eye(object):
 
     @staticmethod
     def _middle_point(p1, p2):
-        """Returns the middle point (x,y) between two points
-
-        Arguments:
-            p1 (dlib.point): First point
-            p2 (dlib.point): Second point
-        """
+       
         x = int((p1.x + p2.x) / 2)
         y = int((p1.y + p2.y) / 2)
         return (x, y)
 
     def _isolate(self, frame, landmarks, points):
-        """Isolate an eye, to have a frame without other part of the face.
-
-        Arguments:
-            frame (numpy.ndarray): Frame containing the face
-            landmarks (dlib.full_object_detection): Facial landmarks for the face region
-            points (list): Points of an eye (from the 68 Multi-PIE landmarks)
-        """
+        
         region = np.array([(landmarks.part(point).x, landmarks.part(point).y) for point in points])
         region = region.astype(np.int32)
 
@@ -65,16 +51,7 @@ class Eye(object):
         self.center = (width / 2, height / 2)
 
     def _blinking_ratio(self, landmarks, points):
-        """Calculates a ratio that can indicate whether an eye is closed or not.
-        It's the division of the width of the eye, by its height.
-
-        Arguments:
-            landmarks (dlib.full_object_detection): Facial landmarks for the face region
-            points (list): Points of an eye (from the 68 Multi-PIE landmarks)
-
-        Returns:
-            The computed ratio
-        """
+        
         left = (landmarks.part(points[0]).x, landmarks.part(points[0]).y)
         right = (landmarks.part(points[3]).x, landmarks.part(points[3]).y)
         top = self._middle_point(landmarks.part(points[1]), landmarks.part(points[2]))
@@ -91,15 +68,7 @@ class Eye(object):
         return ratio
 
     def _analyze(self, original_frame, landmarks, side, calibration):
-        """Detects and isolates the eye in a new frame, sends data to the calibration
-        and initializes Pupil object.
-
-        Arguments:
-            original_frame (numpy.ndarray): Frame passed by the user
-            landmarks (dlib.full_object_detection): Facial landmarks for the face region
-            side: Indicates whether it's the left eye (0) or the right eye (1)
-            calibration (calibration.Calibration): Manages the binarization threshold value
-        """
+       
         if side == 0:
             points = self.LEFT_EYE_POINTS
         elif side == 1:
